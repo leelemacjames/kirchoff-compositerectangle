@@ -51,7 +51,7 @@ code { font-family:var(--font-mono); font-size:0.84em; background:var(--bg-warm)
 
 .canvas-panel { background:var(--bg-card); border:1px solid var(--border-strong); border-radius:10px; margin:22px 0; overflow:hidden; box-shadow:0 2px 12px rgba(44,36,23,0.04); }
 .canvas-panel .panel-head { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1px solid var(--border); font-family:var(--font-mono); font-size:0.76rem; color:var(--text-muted); }
-.canvas-panel canvas { display:block; width:100%; }
+.canvas-panel canvas { display:block; width:100%; max-height:220px; }
 .controls { display:flex; gap:6px; flex-wrap:wrap; padding:10px 16px; border-top:1px solid var(--border); }
 .controls button { font-family:var(--font-mono); font-size:0.76rem; padding:5px 12px; border:1px solid var(--border-strong); border-radius:5px; background:var(--bg); color:var(--text-mid); cursor:pointer; transition:all 0.2s; }
 .controls button:hover { background:var(--bg-warm); border-color:var(--accent); color:var(--accent); }
@@ -128,7 +128,7 @@ $$B\, G\, B^\top \mathbf{v} = \mathbf{j}$$
 
 <div class="canvas-panel">
   <div class="panel-head"><span>Circuit ↔ Rectangle</span><span id="circInfo">Hover over a square to highlight its resistor</span></div>
-  <canvas id="cvCircuit" height="480"></canvas>
+  <canvas id="cvCircuit" height="220"></canvas>
   <div class="controls">
     <button id="btnCirc1" class="active">3×2 (parallel-series)</button>
     <button id="btnCirc2">6×5 (double parallel)</button>
@@ -158,7 +158,7 @@ Node \(y\!=\!23\): in = 8 + 1 = 9, out = 9 ✓
 
 <div class="canvas-panel">
   <div class="panel-head"><span>Squared Rectangle Gallery</span><span id="sqrInfo">Verified tilings</span></div>
-  <canvas id="cvSqRect" height="460"></canvas>
+  <canvas id="cvSqRect" height="220"></canvas>
   <div class="controls">
     <button id="btnSqr1" class="active">3-square (3×2)</button>
     <button id="btnSqr2">5-square (6×5)</button>
@@ -169,8 +169,37 @@ Node \(y\!=\!23\): in = 8 + 1 = 9, out = 9 ✓
 </div>
 </section>
 
+<section id="sec-backtrack">
+<h2><span class="num">03</span> Backtracking Square Tilings</h2>
+
+<p>Finding a valid squared tiling of a given rectangle is a constraint satisfaction problem. Not every sum-of-squares decomposition of an area \(W \times H\) corresponds to a valid tiling: the squares must physically fit without overlapping. The approach is a backtracking algorithm that scans the rectangle left-to-right, bottom-to-top, and at each empty cell tries the largest square that fits. If it reaches a dead end (an empty cell where no square fits), it backtracks and tries the next smaller size.</p>
+
+<div class="canvas-panel">
+  <div class="panel-head"><span>Backtracking Tiler</span><span id="btInfo">Enter dimensions and tile</span></div>
+  <canvas id="cvBacktrack" height="220"></canvas>
+  <div class="controls" style="align-items:center;">
+    <label style="font-family:var(--font-mono);font-size:0.76rem;color:var(--text-mid);">W×H:</label>
+    <input id="inpW" type="number" value="14" min="1" max="30" style="width:42px;font-family:var(--font-mono);font-size:0.76rem;padding:4px 6px;border:1px solid var(--border-strong);border-radius:4px;background:var(--bg);color:var(--text);">
+    <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--text-muted);">×</span>
+    <input id="inpH" type="number" value="3" min="1" max="30" style="width:42px;font-family:var(--font-mono);font-size:0.76rem;padding:4px 6px;border:1px solid var(--border-strong);border-radius:4px;background:var(--bg);color:var(--text);">
+    <button id="btnTile">Tile it</button>
+    <button id="btnTile10x3">10×3</button>
+    <button id="btnTile14x3" class="active">14×3</button>
+    <button id="btnTile8x5">8×5</button>
+    <button id="btnTile22x3">22×3</button>
+  </div>
+  <div class="status-line" id="btStatus">Click "Tile it" to find a square tiling by backtracking.</div>
+</div>
+
+<p>The 14×3 rectangle (area 42) decomposes as \(4 \cdot 3^2 + 2^2 + 2 \cdot 1^2 = 36 + 4 + 2 = 42\). The algorithm finds this tiling by placing four 3×3 squares, then a 2×2, then filling the remaining two 1×1 gaps. For 10×3 (area 30), the tiling uses three 3×3 squares and three 1×1 squares: \(3 \cdot 3^2 + 3 \cdot 1^2 = 27 + 3 = 30\).</p>
+
+<div class="aside">
+<strong>Connection to circuits.</strong> Each valid tiling defines a planar electrical network (the BSST construction in reverse). The horizontal cuts become nodes, the squares become 1Ω resistors, and KCL at each node is the geometric constraint that widths sum correctly. The backtracking algorithm is, in effect, searching for a valid Kirchhoff solution.
+</div>
+</section>
+
 <section id="sec-sumsq">
-<h2><span class="num">03</span> Sum of Squares and the Matrix-Tree Theorem</h2>
+<h2><span class="num">04</span> Sum of Squares and the Matrix-Tree Theorem</h2>
 
 <p>The total area of a squared rectangle is the sum of the squares of the side lengths:</p>
 
@@ -200,6 +229,7 @@ $$\sum_{\text{squares}} s_i^2 = W \times H$$
     &middot; <a href="incidence-matrices.html">Incidence Matrices</a>
     &middot; <a href="quantum-error-correction.html">Quantum Error Correction</a>
   </p>
+  <p style="margin-top:6px;font-size:0.78rem;">GitHub Pages: <a href="https://leelemacjames.github.io/adjacencyMatrix/">Adjacency Matrix</a> · <a href="https://leelemacjames.github.io/spectral-Analysis-Matrices/">Spectral Analysis</a> · <a href="https://leelemacjames.github.io/kirchoff-compositerectangle/">Kirchhoff Rectangles</a></p>
 </footer>
 
 </main>
@@ -302,8 +332,8 @@ const COL = {
     const nN = circ.nodes.length, nE = circ.edges.length;
 
     // === LEFT SIDE: Circuit diagram ===
-    const cw = w * 0.38, ch = h - 60;
-    const cx = 40, cy = 40;
+    const cw = w * 0.32, ch = h - 30;
+    const cx = 30, cy = 16;
 
     // Draw nodes as horizontal lines
     circ.nodes.forEach((nd, ni) => {
@@ -387,8 +417,8 @@ const COL = {
 
     // === RIGHT SIDE: Squared rectangle ===
     const rpad = 20;
-    const rx = w * 0.46, ry = 40;
-    const rw = w - rx - rpad, rh = h - 80;
+    const rx = w * 0.38, ry = 16;
+    const rw = w - rx - rpad, rh = h - 40;
     const scale = Math.min(rw / circ.W, rh / circ.H);
     const ox = rx + (rw - circ.W * scale) / 2;
     const oy = ry + (rh - circ.H * scale) / 2;
@@ -447,7 +477,7 @@ const COL = {
     const mx = e.clientX - rect.left, my = e.clientY - rect.top;
     const circ = CIRCUITS[current];
     const rpad = 20;
-    const rx = w*0.46, ry = 40, rw = w-rx-rpad, rh = h-80;
+    const rx = w*0.38, ry = 16, rw = w-rx-rpad, rh = h-40;
     const scale = Math.min(rw/circ.W, rh/circ.H);
     const ox = rx + (rw - circ.W*scale)/2, oy = ry + (rh - circ.H*scale)/2;
 
@@ -581,6 +611,112 @@ const COL = {
   window.addEventListener('resize',()=>{ ({c,ctx,w,h}=setupCanvas('cvSqRect')); draw(); });
 })();
 
+// ============================================================
+//  BACKTRACKING SQUARE TILER
+// ============================================================
+(function(){
+  let {c,ctx,w,h} = setupCanvas('cvBacktrack');
+  let currentTiling = null;
+  let tileW = 14, tileH = 3;
+
+  function isValid(board, row, col, size) {
+    if (row+size > board.length || col+size > board[0].length) return false;
+    for (let i=row;i<row+size;i++) for (let j=col;j<col+size;j++) if (board[i][j]) return false;
+    return true;
+  }
+  function placeSquare(board, row, col, size, val) {
+    for (let i=row;i<row+size;i++) for (let j=col;j<col+size;j++) board[i][j]=val;
+  }
+  function solve(board, W, H, result) {
+    for (let row=0;row<H;row++) for (let col=0;col<W;col++) {
+      if (!board[row][col]) {
+        const maxS = Math.min(W-col, H-row);
+        for (let size=maxS;size>=1;size--) {
+          if (isValid(board,row,col,size)) {
+            placeSquare(board,row,col,size,true);
+            result.push({x:col, y:H-row-size, s:size});
+            if (solve(board,W,H,result)) return true;
+            placeSquare(board,row,col,size,false);
+            result.pop();
+          }
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function doTile(W,H) {
+    tileW=W; tileH=H;
+    const board = Array.from({length:H}, ()=>new Array(W).fill(false));
+    const result = [];
+    const ok = solve(board,W,H,result);
+    currentTiling = ok ? {W,H,squares:result} : null;
+    draw();
+  }
+
+  const tilePalette = ['rgba(180,74,30,0.55)','rgba(26,107,74,0.55)','rgba(59,89,152,0.55)','rgba(196,148,10,0.55)','rgba(142,68,173,0.45)','rgba(22,160,133,0.45)','rgba(192,57,43,0.45)','rgba(44,62,80,0.4)','rgba(39,174,96,0.45)','rgba(41,128,185,0.45)','rgba(243,156,18,0.45)','rgba(155,89,182,0.45)'];
+  const tileBorders = ['#b44a1e','#1a6b4a','#3b5998','#c4940a','#8e44ad','#16a085','#c0392b','#2c3e50','#27ae60','#2980b9','#f39c12','#9b59b6'];
+
+  function draw() {
+    ctx.clearRect(0,0,w,h);
+    if (!currentTiling) {
+      ctx.fillStyle=COL.textMuted; ctx.font='13px "IBM Plex Mono"'; ctx.textAlign='center';
+      ctx.fillText('No tiling found (or not yet computed)',w/2,h/2);
+      return;
+    }
+    const t=currentTiling;
+    const pad=16;
+    const scale=Math.min((w-pad*2)/t.W, (h-pad*2)/t.H);
+    const ox=pad+(w-pad*2-t.W*scale)/2, oy=pad+(h-pad*2-t.H*scale)/2;
+
+    ctx.strokeStyle=COL.text; ctx.lineWidth=1.5;
+    ctx.strokeRect(ox,oy,t.W*scale,t.H*scale);
+
+    t.squares.forEach((sq,i)=>{
+      const sx=ox+sq.x*scale, sy=oy+(t.H-sq.y-sq.s)*scale, ss=sq.s*scale;
+      ctx.fillStyle=tilePalette[i%tilePalette.length];
+      ctx.fillRect(sx,sy,ss,ss);
+      ctx.strokeStyle=tileBorders[i%tileBorders.length]; ctx.lineWidth=1;
+      ctx.strokeRect(sx,sy,ss,ss);
+      if(ss>14){
+        ctx.fillStyle='#fff'; ctx.font=`600 ${Math.min(ss*0.38,14)}px "IBM Plex Mono"`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(String(sq.s), sx+ss/2, sy+ss/2);
+      }
+    });
+
+    // stats
+    const sizes = t.squares.map(s=>s.s).sort((a,b)=>b-a);
+    const sumSq = sizes.reduce((a,s)=>a+s*s,0);
+    ctx.fillStyle=COL.textMuted; ctx.font='10px "IBM Plex Mono"'; ctx.textAlign='right';
+    ctx.fillText(`${t.squares.length} squares: [${sizes.join(',')}]`, w-pad, h-4);
+    ctx.fillText(`Σs²=${sumSq} = ${t.W}×${t.H}`, w-pad, h-16);
+
+    document.getElementById('btStatus').textContent=
+      `${t.W}×${t.H} = ${t.W*t.H}. ${t.squares.length} squares. Σsᵢ² = ${sumSq}.`;
+  }
+
+  document.getElementById('btnTile').addEventListener('click',()=>{
+    const W=parseInt(document.getElementById('inpW').value)||10;
+    const H=parseInt(document.getElementById('inpH').value)||3;
+    document.querySelectorAll('#cvBacktrack ~ .controls button').forEach(b=>b.classList.remove('active'));
+    doTile(W,H);
+  });
+  [{id:'btnTile10x3',w:10,h:3},{id:'btnTile14x3',w:14,h:3},{id:'btnTile8x5',w:8,h:5},{id:'btnTile22x3',w:22,h:3}].forEach(p=>{
+    document.getElementById(p.id).addEventListener('click',function(){
+      document.querySelectorAll('#cvBacktrack ~ .controls button').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById('inpW').value=p.w;
+      document.getElementById('inpH').value=p.h;
+      doTile(p.w,p.h);
+    });
+  });
+
+  doTile(14,3);
+  window.addEventListener('resize',()=>{ ({c,ctx,w,h}=setupCanvas('cvBacktrack')); draw(); });
+})();
+
 // Scroll reveal
 const observer = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
@@ -597,3 +733,4 @@ renderMathInElement(document.body, {
 </script>
 </body>
 </html>
+
